@@ -2,20 +2,12 @@ package domain
 
 import scala.util.{Failure, Success, Try}
 
-object Room {
-  def apply(name: String, users: Set[RoomUser]): Room = new Room(id, users)
-}
-
 case class Room(
                  id: String,
-                 users: Set[RoomUser],
-                 volunteeringHistory: Map[RoomUser, Int],
-                 polls: Seq[Poll]
-               ) extends RoomOps {
-  def this(id: String, users: Set[RoomUser]) {
-    this(id, users, Map(), Seq())
-  }
-}
+                 users: Set[RoomUser] = Set(),
+                 volunteeringHistory: Map[RoomUser, Int] = Map(),
+                 polls: Seq[Poll] = Seq()
+               ) extends RoomOps
 
 final case class RoomUser(name: String)
 
@@ -48,7 +40,7 @@ trait RoomOps {
     }
 
   def getActivePoll: Try[Poll] = self.polls match {
-    case Seq(latest, _) if latest.isOpen => Success(latest)
+    case latest::_ if latest.isOpen => Success(latest)
     case _ => Failure(new IllegalStateException("Room doesn't have an active poll"))
   }
 

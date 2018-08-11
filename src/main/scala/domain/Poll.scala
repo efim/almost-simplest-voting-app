@@ -45,7 +45,7 @@ trait PollOps {
     val weightedUsers: Seq[(RoomUser, Int)] = volunteers.map(user => user -> (history.getOrElse(user, 0) + 1))(breakOut)
 
     val rand = scala.util.Random
-    val selection: Int = rand(weightedUsers.map(_._2).sum)
+    val selection: Int = rand.nextInt(weightedUsers.map(_._2).sum)
 
     def findSelected(acc: Int, restOfWeightedUsers: Seq[(RoomUser, Int)]): RoomUser = restOfWeightedUsers match {
       case Seq(last) => last._1
