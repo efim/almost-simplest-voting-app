@@ -25,14 +25,14 @@ trait Storage[K, T] {
 trait MemoryStorage[K, T] extends Storage[K, T] {
 
   var idToItem: Map[K, T] = Map()
-  def nextKey():  K
+  def getKey(item: T):  K
 
   override def get(id: K): Option[T] = idToItem.get(id)
 
   override def list(): Seq[T] = idToItem.values.toSeq
 
   override def insert(item: T): Either[InsertionError, K] = {
-    val id = nextKey()
+    val id = getKey(item)
     idToItem = idToItem + (id -> item)
     Right(id)
   }
@@ -50,12 +50,6 @@ trait MemoryStorage[K, T] extends Storage[K, T] {
       1
     case None => 0
   }
-}
 
-abstract class LongKeyStorage[T] extends Storage[Long, T] {
-  var key: Long = 0
-  def nextKey() = {
-    key += 1
-    key
-  }
+
 }
