@@ -8,7 +8,7 @@ import actors.RoomActor.RoomUser
 class TestMemoryStorage extends FlatSpec with Matchers with EitherValues with OptionValues {
 
   "Poll memory storage singleton test" should "be big and stupid" in {
-    val pollDao = PollStorage.memoryStorage()
+    val pollDao = PollStorage.memory()
     val poll1 = Poll()
     val poll2 = Poll(history = Map(RoomUser("u1") -> 1, RoomUser("u2") -> 2))
     val key1 = pollDao.insert(poll1).right.get

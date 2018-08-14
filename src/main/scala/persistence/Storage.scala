@@ -1,6 +1,5 @@
 package persistence
 
-import actors.PollActor.Poll
 import persistence.Storage.InsertionError
 
 /*

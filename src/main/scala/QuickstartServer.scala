@@ -13,7 +13,6 @@ object QuickstartServer extends App with RoomsRoutes {
   implicit val system: ActorSystem = ActorSystem("ASVotingHttpServer")
   implicit val materializer: ActorMaterializer = ActorMaterializer()
 
-  val applicationSupervisor: ActorRef = system.actorOf(AppSupervisor.props(), "app-supervisor")
 //  val roomsManagerActor: ActorRef = ???
 
   lazy val routes: Route = roomsRoutes
