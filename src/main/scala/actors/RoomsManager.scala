@@ -1,7 +1,7 @@
 package actors
 
 import actors.RoomsManager.RequestTrackRoom
-import akka.actor.{Actor, ActorLogging, Props, Terminated}
+import akka.actor.{Actor, ActorLogging, ActorRef, Props, Terminated}
 
 object RoomsManager {
   def props(): Props = Props(new RoomsManager)
@@ -18,9 +18,28 @@ class RoomsManager extends Actor with ActorLogging {
   override def preStart(): Unit = log.info("Rooms manager started")
   override def postStop(): Unit = log.info("Rooms manager stopped")
 
+  var roomIdToActor: Map[String, ActorRef] = Map()
+  var roomActorToId: Map[ActorRef, String] = Map()
+
   override def receive: Receive = {
-    case RequestTrackRoom(name) => ???
-    case Terminated(roomActor) => ???
+    case msg@RequestTrackRoom(name) =>
+      val roomActor = roomIdToActor.get(name) match {
+        case Some(roomActor) => roomActor
+        case None =>
+          val roomActor = context.actorOf(RoomActor.props(name))
+          roomIdToActor += (name -> roomActor)
+          roomActorToId += (roomActor -> name)
+          context.watch(roomActor)
+          roomActor
+      }
+      roomActor.forward(msg)
+
+    case Terminated(roomActor) =>
+      val roomId = roomActorToId(roomActor)
+      roomIdToActor -= roomId
+      roomActorToId -= roomActor
+      log.info(s"Room actor for $roomId has been terminated")
+
   }
 
 }
