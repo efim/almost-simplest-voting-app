@@ -1,4 +1,3 @@
-import actors.AppSupervisor
 import akka.actor.{ActorRef, ActorSystem}
 import akka.http.scaladsl.Http
 import akka.http.scaladsl.server.Route

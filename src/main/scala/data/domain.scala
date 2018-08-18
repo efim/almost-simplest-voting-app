@@ -7,6 +7,8 @@ object domain {
                          volunteeringHistory: Map[RoomUser, Int] = Map(),
                          activePollId: Option[PollId] = None)
 
+  final case class NewRoom(name: String)
+
   final case class RoomUser(name: String)
 
   final case class Poll(winner: Option[RoomUser] = None,

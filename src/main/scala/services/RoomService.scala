@@ -6,12 +6,17 @@ import RoomStorage._
 import data.domain._
 
 import scala.concurrent.Future
+import scala.concurrent.ExecutionContext.Implicits.global
 
-class RoomService {
+object RoomService {
 
   val roomDao: Storage[RoomId, Room] = RoomStorage.memory()
 
-  def create(roomId: RoomId): Future[ActionPerformed] = ???
+  def create(roomId: RoomId): Future[Either[Error, ActionPerformed]] = {
+    val room = Room(name=roomId)
+    roomDao.insert(room).map (_.map(id => ActionPerformed(s"Room with id $id is created")))
+
+  }
 
   def delete(roomId: RoomId): Future[ActionPerformed] = ???
 
@@ -22,7 +27,7 @@ class RoomService {
 
   def removeUser(roomId: RoomId, user: RoomUser): Future[ActionPerformed] = ???
 
-  def get(roomId: RoomId): Future[Room] = ???
+  def get(roomId: RoomId): Future[Option[Room]] = roomDao.get(roomId)
 
   def startPoll(roomId: RoomId): Future[ActionPerformed] = ???
 

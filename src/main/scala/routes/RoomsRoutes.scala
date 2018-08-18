@@ -11,15 +11,19 @@ import akka.http.scaladsl.server.directives.MethodDirectives.get
 import akka.http.scaladsl.server.directives.MethodDirectives.post
 import akka.http.scaladsl.server.directives.RouteDirectives.complete
 import akka.http.scaladsl.server.directives.PathDirectives.path
-
 import akka.util.Timeout
+import data.domain.{ActionPerformed, NewRoom, Room, RoomId}
+import services.RoomService
+import spray.json.JsValue
+
+import scala.concurrent.Future
 
 trait RoomsRoutes extends JsonSupport {
   implicit val system: ActorSystem
 
   lazy val log = Logging(system, classOf[RoomsRoutes])
 
-//  def roomsManagerActor: ActorRef
+  //  def roomsManagerActor: ActorRef
 
   implicit lazy val timeout = Timeout(5.seconds)
 
@@ -27,10 +31,34 @@ trait RoomsRoutes extends JsonSupport {
     pathPrefix("rooms") {
       concat(
         pathEnd {
-          get {
-            complete("stub")
-          }
+          concat(
+            get {
+              complete("stub")
+            },
+            post {
+              entity(as[NewRoom]) { newRoom =>
+                val roomCreated: Future[Either[Error, ActionPerformed]] = RoomService.create(newRoom.name)
+                onSuccess(roomCreated) {
+                  case Right(actionPerformed) =>
+                    log.info(s"Created room: $actionPerformed")
+                    complete((StatusCodes.Created, actionPerformed))
+                  case Left(error) => failWith(error)
+                }
+              }
+            }
+          )
+        },
+        path(Segment) { name =>
+          concat(
+            get {
+              val maybeRoom: Future[Option[Room]] = RoomService.get(name)
+              rejectEmptyResponse {
+                complete(maybeRoom)
+              }
+            }
+          )
         }
       )
     }
+
 }
