@@ -1,0 +1,10 @@
+version: '2'
+
+services:
+  scala:
+    build: .
+    volumes:
+      - .:/exampleapp
+      - ./.ivy2:/root/.ivy2
+      - ./.sbt:/root/.sbt
+

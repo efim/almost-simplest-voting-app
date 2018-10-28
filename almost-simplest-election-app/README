@@ -1,0 +1,6 @@
+should become an app for electing a speaker among group of gathered people
+with additional weight for unsatisfied requests to become speaker on previous gatherings
+
+used:
+g8 template with typelevel things for web app: https://github.com/gvolpe/typelevel-stack.g8
+docker for scala and sbt: https://gist.github.com/hlegius/ead3670eda810d653c7b2bcab4574cfe
